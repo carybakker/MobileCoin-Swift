@@ -2,7 +2,7 @@ name: sdk-tests
 
 on:
   workflow_dispatch:
-    intputs:
+    inputs:
       network:
         description: 'MobileCoin Network'
         required: true
