@@ -60,10 +60,9 @@ jobs:
     runs-on: macos-latest
     needs: set-mobilecoin-network
     steps:
-     - name: GCP Service Account
+      - name: GCP Service Account
         run: |
           echo '${{ secrets.GCP_SERVICE_KEY }}' > "service-key.json"
-
 
   build-example:
     runs-on: macos-latest
