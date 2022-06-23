@@ -171,12 +171,16 @@ jobs:
   integration-test-example:
     runs-on: macos-latest
     needs: [build-example, build-example-http]
-    working_directory: ./Example
-    run: make test
+    steps:
+      - name: Run Integration Tests On Example
+        working_directory: ./Example
+        run: make test
 
   integration-test-example-http:
     runs-on: macos-latest
     needs: integration-test-example
-    working_directory: ./ExampleHTTP
-    run: make testt
+    steps:
+      - name: Run Integration Tests On Example
+        working_directory: ./ExampleHTTP
+        run: make testt
 
