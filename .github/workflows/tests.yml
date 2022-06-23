@@ -25,6 +25,7 @@ jobs:
         uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
         with:
           ruby-version: '2.7'
+          bundler-cache: true
 
       - name: Install 'rename' command 
         run: brew install rename
@@ -60,10 +61,6 @@ jobs:
           bundle config set --local clean 'true'
           bundle check || bundle install
 
-      - name: Install pods for Example project
-        working-directory: ./Example
-        run: bundle exec pod install --deployment 
-
       - name: Make Setup
         working-directory: ./Example
         run: make setup
@@ -85,9 +82,9 @@ jobs:
           bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "${DYNAMIC_FOG_AUTH_SPKI}"
           bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${DYNAMIC_SEED_ENTROPIES}"
 
-      - name: Make Bootstrap PreKeys
+      - name: Install pods for Example project
         working-directory: ./Example
-        run: make bootstrap 
+        run: bundle exec pod install --deployment 
 
       - name: Generating CocoaPods Keys
         run: ./scripts/setkeysfor Example
