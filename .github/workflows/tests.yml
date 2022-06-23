@@ -18,32 +18,75 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
 
 jobs:
-  test:
+  install-dependencies:
     runs-on: macos-latest
+      - name: Set Ruby Version to 2.7
+        uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
+        with:
+          ruby-version: '2.7'
 
-    steps:
-      - name: Install tools
+      - name: Install 'rename' command 
         run: brew install rename
 
-      - name: Checkout
+  checkout-code:
+    runs-on: macos-latest
+    needs: install-dependencies
+    steps:
+      - name: Checkout Code
         uses: actions/checkout@v2
 
       - name: Get Submodules
-        run: git submodule update --init --recursive
-      
-      - name: GCP Service Account
-        run: |
-          echo '${{ secrets.GCP_SERVICE_KEY }}' > "service-key.json"
+        working_directory: Vendor/libmobilecoin-ios-artifacts
+        run: git submodule update --init --depth 1 --recursive
 
+      - name: Install Gems
+        run: |
+          bundle config set --local deployment 'true'
+          bundle config set --local path '.vendor/bundle'
+          bundle config set --local clean 'true'
+          bundle check || bundle install
+
+  set-mobilecoin-network:
+    runs-on: macos-latest
+    needs: checkout-code
+    steps:
       - name: Set the Network
         env:
           NETWORK_UNDER_TEST: ${{ github.event.inputs.network }}
         run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .${NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
 
+  set-gcp-service-account:
+    runs-on: macos-latest
+    needs: set-mobilecoin-network
+    steps:
+     - name: GCP Service Account
+        run: |
+          echo '${{ secrets.GCP_SERVICE_KEY }}' > "service-key.json"
+
+
+  build-example:
+    runs-on: macos-latest
+    needs: set-gcp-service-account
+    steps:
+
+      - name: Install Example Gems
+        working_directory: ./Example
+        run: |
+          bundle config set --local deployment 'true'
+          bundle config set --local path '.vendor/bundle'
+          bundle config set --local clean 'true'
+          bundle check || bundle install
+
+      - name: Install pods for Example project
+        working_directory: ./Example
+        run: bundle exec pod install --deployment 
+
       - name: Make Setup
+        working_directory: ./Example
         run: make setup
 
       - name: Provide Dev Credentials
+        working_directory: ./Example
         env:
           TEST_DEV_USER: ${{ secrets.DEV_NETWORK_AUTH_USERNAME}}
           TEST_DEV_PASSWORD: ${{ secrets.DEV_NETWORK_AUTH_PASSWORD}}
@@ -52,44 +95,88 @@ jobs:
           DYNAMIC_FOG_AUTH_SPKI: ${{ secrets.DYNAMIC_TEST_ACCOUNT_FOG_AUTHORITY_SPKI }}
           DYNAMIC_SEED_ENTROPIES: ${{ secrets.DYNAMIC_TEST_ACCOUNT_SEED_ENTROPIES_COMMA_SEPARATED }}
         run: |
-          echo 'setting dev user and password for Example'
-          cd Example
           bundle exec pod keys set devNetworkAuthUsername ${TEST_DEV_USER}
           bundle exec pod keys set devNetworkAuthPassword ${TEST_DEV_PASSWORD}
-          echo 'Setting TestNet Mnemonics for Example'
           bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated "${TEST_NET_MNEMONICS}"
-          echo 'Setting DevNet Mnemonics for Example'
           bundle exec pod keys set mobileDevTestAccountMnemonicsCommaSeparated "${DEV_NET_MNEMONICS}"
-          echo 'Setting Dynamic Fog SPKI for Example'
           bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "${DYNAMIC_FOG_AUTH_SPKI}"
-          echo 'Setting Dynamic Seed Entropies for Example'
           bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${DYNAMIC_SEED_ENTROPIES}"
-          cd ..
-          echo 'setting dev user and password for ExampleHTTP'
-          cd ExampleHTTP
-          bundle exec pod keys set devNetworkAuthUsername ${TEST_DEV_USER}
-          bundle exec pod keys set devNetworkAuthPassword ${TEST_DEV_PASSWORD}
-          echo 'Setting TestNet Mnemonics for ExampleHTTP'
-          bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated "${TEST_NET_MNEMONICS}"
-          echo 'Setting DevNet Mnemonics for ExampleHTTP'
-          bundle exec pod keys set mobileDevTestAccountMnemonicsCommaSeparated "${DEV_NET_MNEMONICS}"
-          echo 'Setting Dynamic Fog SPKI for ExampleHTTP'
-          bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "${DYNAMIC_FOG_AUTH_SPKI}"
-          echo 'Setting Dynamic Seed Entropies for ExampleHTTP'
-          bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${DYNAMIC_SEED_ENTROPIES}"
-          cd ..
-          echo 'Running make lock as a prerequisite for setting up credentials' 
-          make lock 
-      
-      - name: Pre-Keys make lock
-        run: make lock
+
+      - name: Make Bootstrap PreKeys
+        working_directory: ./Example
+        run: make bootstrap 
 
       - name: Generating CocoaPods Keys
-        run: ./scripts/setkeys
+        run: ./scripts/setkeysfor Example
 
-      # when keys file is renamed from incorrect Example, build is failing b/c ExampleKeys not found :/
-      - name: Post-Keys make lock
-        run: make lock
+      - name: Make Bootstrap PostKeys
+        working_directory: ./Example
+        run: make bootstrap 
+
+      - name: Build
+        run: make build-example 
+
+  build-example-http:
+    runs-on: macos-latest
+    needs: set-gcp-service-account
+    steps:
+      - name: Install ExampleHTTP Gems
+        working_directory: ./ExampleHTTP
+        run: |
+          bundle config set --local deployment 'true'
+          bundle config set --local path '.vendor/bundle'
+          bundle config set --local clean 'true'
+          bundle check || bundle install
+
+      - name: Install pods for ExampleHTTP project
+        working_directory: ./ExampleHTTP
+        run: bundle exec pod install --deployment 
+
+      - name: Make Setup
+        working_directory: ./ExampleHTTP
+        run: make setup
+
+      - name: Provide Dev Credentials
+        working_directory: ./Example
+        env:
+          TEST_DEV_USER: ${{ secrets.DEV_NETWORK_AUTH_USERNAME}}
+          TEST_DEV_PASSWORD: ${{ secrets.DEV_NETWORK_AUTH_PASSWORD}}
+          TEST_NET_MNEMONICS: ${{ secrets.TEST_ACCOUNT_MNEMONICS_COMMA_SEPARATED }}
+          DEV_NET_MNEMONICS: ${{ secrets.MOBILEDEV_TEST_ACCOUNT_MNEMONICS_COMMA_SEPARATED }}
+          DYNAMIC_FOG_AUTH_SPKI: ${{ secrets.DYNAMIC_TEST_ACCOUNT_FOG_AUTHORITY_SPKI }}
+          DYNAMIC_SEED_ENTROPIES: ${{ secrets.DYNAMIC_TEST_ACCOUNT_SEED_ENTROPIES_COMMA_SEPARATED }}
+        run: |
+          bundle exec pod keys set devNetworkAuthUsername ${TEST_DEV_USER}
+          bundle exec pod keys set devNetworkAuthPassword ${TEST_DEV_PASSWORD}
+          bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated "${TEST_NET_MNEMONICS}"
+          bundle exec pod keys set mobileDevTestAccountMnemonicsCommaSeparated "${DEV_NET_MNEMONICS}"
+          bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "${DYNAMIC_FOG_AUTH_SPKI}"
+          bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${DYNAMIC_SEED_ENTROPIES}"
+
+      - name: Make Bootstrap PreKeys
+        working_directory: ./ExampleHTTP
+        run: make bootstrap 
+
+      - name: Generating CocoaPods Keys
+        run: ./scripts/setkeysfor ExampleHTTP
+
+      - name: Make Bootstrap PostKeys
+        working_directory: ./ExampleHTTP
+        run: make bootstrap 
 
       - name: Build
         run: make build-example-http 
+
+
+  integration-test-example:
+    runs-on: macos-latest
+    needs: [build-example, build-example-http]
+    working_directory: ./Example
+    run: make test
+
+  integration-test-example-http:
+    runs-on: macos-latest
+    needs: integration-test-example
+    working_directory: ./ExampleHTTP
+    run: make testt
+
