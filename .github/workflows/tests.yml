@@ -18,7 +18,7 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
 
 jobs:
-  install-dependencies:
+  test-example:
     runs-on: macos-latest
     steps:
       - name: Set Ruby Version to 2.7
@@ -29,10 +29,6 @@ jobs:
       - name: Install 'rename' command 
         run: brew install rename
 
-  checkout-code:
-    runs-on: macos-latest
-    needs: install-dependencies
-    steps:
       - name: Checkout Code
         uses: actions/checkout@v2
 
@@ -47,27 +43,14 @@ jobs:
           bundle config set --local clean 'true'
           bundle check || bundle install
 
-  set-mobilecoin-network:
-    runs-on: macos-latest
-    needs: checkout-code
-    steps:
       - name: Set the Network
         env:
           NETWORK_UNDER_TEST: ${{ github.event.inputs.network }}
         run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .${NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
 
-  set-gcp-service-account:
-    runs-on: macos-latest
-    needs: set-mobilecoin-network
-    steps:
       - name: GCP Service Account
         run: |
           echo '${{ secrets.GCP_SERVICE_KEY }}' > "service-key.json"
-
-  build-example:
-    runs-on: macos-latest
-    needs: set-gcp-service-account
-    steps:
 
       - name: Install Example Gems
         working-directory: ./Example
@@ -114,12 +97,13 @@ jobs:
         run: make bootstrap 
 
       - name: Build
-        run: make build-example 
+        working-directory: ./Example
+        run: make build
 
-  build-example-http:
-    runs-on: macos-latest
-    needs: set-gcp-service-account
-    steps:
+      - name: Run Integration Tests On Example
+        working-directory: ./Example
+        run: make test
+
       - name: Install ExampleHTTP Gems
         working-directory: ./ExampleHTTP
         run: |
@@ -165,21 +149,9 @@ jobs:
         run: make bootstrap 
 
       - name: Build
-        run: make build-example-http 
+        working-directory: ./ExampleHTTP
+        run: make build
 
-
-  integration-test-example:
-    runs-on: macos-latest
-    needs: [build-example, build-example-http]
-    steps:
-      - name: Run Integration Tests On Example
-        working-directory: ./Example
-        run: make test
-
-  integration-test-example-http:
-    runs-on: macos-latest
-    needs: integration-test-example
-    steps:
       - name: Run Integration Tests On Example
         working-directory: ./ExampleHTTP
         run: make testt
