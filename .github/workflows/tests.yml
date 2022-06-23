@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Get Submodules
-        working_directory: Vendor/libmobilecoin-ios-artifacts
+        working-directory: Vendor/libmobilecoin-ios-artifacts
         run: git submodule update --init --depth 1 --recursive
 
       - name: Install Gems
@@ -70,7 +70,7 @@ jobs:
     steps:
 
       - name: Install Example Gems
-        working_directory: ./Example
+        working-directory: ./Example
         run: |
           bundle config set --local deployment 'true'
           bundle config set --local path '.vendor/bundle'
@@ -78,15 +78,15 @@ jobs:
           bundle check || bundle install
 
       - name: Install pods for Example project
-        working_directory: ./Example
+        working-directory: ./Example
         run: bundle exec pod install --deployment 
 
       - name: Make Setup
-        working_directory: ./Example
+        working-directory: ./Example
         run: make setup
 
       - name: Provide Dev Credentials
-        working_directory: ./Example
+        working-directory: ./Example
         env:
           TEST_DEV_USER: ${{ secrets.DEV_NETWORK_AUTH_USERNAME}}
           TEST_DEV_PASSWORD: ${{ secrets.DEV_NETWORK_AUTH_PASSWORD}}
@@ -103,14 +103,14 @@ jobs:
           bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${DYNAMIC_SEED_ENTROPIES}"
 
       - name: Make Bootstrap PreKeys
-        working_directory: ./Example
+        working-directory: ./Example
         run: make bootstrap 
 
       - name: Generating CocoaPods Keys
         run: ./scripts/setkeysfor Example
 
       - name: Make Bootstrap PostKeys
-        working_directory: ./Example
+        working-directory: ./Example
         run: make bootstrap 
 
       - name: Build
@@ -121,7 +121,7 @@ jobs:
     needs: set-gcp-service-account
     steps:
       - name: Install ExampleHTTP Gems
-        working_directory: ./ExampleHTTP
+        working-directory: ./ExampleHTTP
         run: |
           bundle config set --local deployment 'true'
           bundle config set --local path '.vendor/bundle'
@@ -129,15 +129,15 @@ jobs:
           bundle check || bundle install
 
       - name: Install pods for ExampleHTTP project
-        working_directory: ./ExampleHTTP
+        working-directory: ./ExampleHTTP
         run: bundle exec pod install --deployment 
 
       - name: Make Setup
-        working_directory: ./ExampleHTTP
+        working-directory: ./ExampleHTTP
         run: make setup
 
       - name: Provide Dev Credentials
-        working_directory: ./Example
+        working-directory: ./Example
         env:
           TEST_DEV_USER: ${{ secrets.DEV_NETWORK_AUTH_USERNAME}}
           TEST_DEV_PASSWORD: ${{ secrets.DEV_NETWORK_AUTH_PASSWORD}}
@@ -154,14 +154,14 @@ jobs:
           bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${DYNAMIC_SEED_ENTROPIES}"
 
       - name: Make Bootstrap PreKeys
-        working_directory: ./ExampleHTTP
+        working-directory: ./ExampleHTTP
         run: make bootstrap 
 
       - name: Generating CocoaPods Keys
         run: ./scripts/setkeysfor ExampleHTTP
 
       - name: Make Bootstrap PostKeys
-        working_directory: ./ExampleHTTP
+        working-directory: ./ExampleHTTP
         run: make bootstrap 
 
       - name: Build
@@ -173,7 +173,7 @@ jobs:
     needs: [build-example, build-example-http]
     steps:
       - name: Run Integration Tests On Example
-        working_directory: ./Example
+        working-directory: ./Example
         run: make test
 
   integration-test-example-http:
@@ -181,6 +181,6 @@ jobs:
     needs: integration-test-example
     steps:
       - name: Run Integration Tests On Example
-        working_directory: ./ExampleHTTP
+        working-directory: ./ExampleHTTP
         run: make testt
 
