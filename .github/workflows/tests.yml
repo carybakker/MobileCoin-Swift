@@ -9,10 +9,10 @@ on:
         default: 'mobileDev'
         type: choice
         options:
-          - '.mobileDev'
-          - '.alpha'
-          - '.testNet'
-          - 'dynamicConfig'
+          - 'mobileDev'
+          - 'alpha'
+          - 'testNet'
+          - 'dynamic(alphaDev)'
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
@@ -47,7 +47,7 @@ jobs:
       - name: Set the Network
         env:
           NETWORK_UNDER_TEST: ${{ github.event.inputs.network }}
-        run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = ${NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
+        run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .${NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
 
       - name: GCP Service Account
         run: |
