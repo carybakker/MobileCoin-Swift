@@ -93,10 +93,6 @@ jobs:
         working-directory: ./Example
         run: make bootstrap 
 
-      - name: Build
-        working-directory: ./Example
-        run: make build
-
       - name: Run Integration Tests On Example
         working-directory: ./Example
         run: bundle exec fastlane scan --scheme "Integration Tests"
