@@ -6,13 +6,13 @@ on:
       network:
         description: 'MobileCoin Network'
         required: true
-        default: 'mobileDev'
+        default: 'testNet'
         type: choice
         options:
-          - 'mobileDev'
+          - 'mobileev'
           - 'alpha'
           - 'testNet'
-          - 'dynamicConfig'
+          - 'dynamic(alphaDev)'
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
