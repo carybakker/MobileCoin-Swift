@@ -6,10 +6,10 @@ on:
       network:
         description: 'MobileCoin Network'
         required: true
-        default: 'mobileDev'
+        default: 'testNet'
         type: choice
         options:
-          - 'mobileDev'
+          - 'mobiledev'
           - 'alpha'
           - 'testNet'
           - 'dynamic(alphaDev)'
