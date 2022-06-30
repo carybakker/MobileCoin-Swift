@@ -9,7 +9,7 @@ on:
         default: 'testNet'
         type: choice
         options:
-          - 'mobileev'
+          - 'mobiledev'
           - 'alpha'
           - 'testNet'
           - 'dynamic(alphaDev)'
