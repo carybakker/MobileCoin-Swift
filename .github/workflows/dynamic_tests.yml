@@ -110,7 +110,7 @@ jobs:
         run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" --suppress_xcode_output
 
       - uses: actions/upload-artifact@v3
-        if: always()
         with:
           name: test-results
+          if: always()
           path: ./Example/test_output/report.html
