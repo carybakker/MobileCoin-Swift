@@ -81,6 +81,23 @@ extension DynamicNetworkConfig {
                 user: Self.user)
         }
     }
+
+    #if canImport(Keys)
+    enum Dynamic {
+        static let user = MobileCoinKeys().dynamicUser
+        static let namespace = MobileCoinKeys().dynamicNamespace
+        static let environment = MobileCoinKeys().dynamicEnvironment
+        static let fogAuthoritySpkiB64Encoded = MobileCoinKeys().dynamicFogAuthoritySpki
+
+        static func make() -> DynamicNetworkConfig {
+            DynamicNetworkConfig(
+                namespace: Self.namespace,
+                environment: Self.environment,
+                fogAuthoritySpkiB64Encoded: Self.fogAuthoritySpkiB64Encoded,
+                user: Self.user)
+        }
+    }
+    #endif
 }
 
 extension NetworkPreset {
