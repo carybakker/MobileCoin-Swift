@@ -23,6 +23,13 @@ on:
         description: 'Seed Entropies - Comma Separated'
         required: true
         default: ''
+      suppress-xcode-output:
+        description: 'XCode Output Option'
+        default: '--suppress_xcode_output'
+        type: choice
+        options:
+          - '--suppress_xcode_output'
+          - ' '
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
@@ -107,7 +114,9 @@ jobs:
 
       - name: Run Integration Tests On Example
         working-directory: ./Example
-        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" --suppress_xcode_output
+        env:
+          SUPPRESS_XCODE_OUTPUT: ${{ github.event.inputs.suppress-xcode-output }}
+        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" ${{ SUPPRESS_XCODE_OUTPUT }}
 
       - uses: actions/upload-artifact@v3
         with:
