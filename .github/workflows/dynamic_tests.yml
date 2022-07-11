@@ -64,7 +64,7 @@ jobs:
       - name: Set up test Network
         env:
           NETWORK_UNDER_TEST: ${{ github.event.inputs.network }}
-        run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .${NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
+        run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .{NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
 
       - name: GCP Service Account
         run: |
@@ -98,8 +98,8 @@ jobs:
           bundle exec pod keys set user "{USER}"
           bundle exec pod keys set namespace "{NAMESPACE}"
           bundle exec pod keys set environment "{ENVIRONMENT}"
-          bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "${FOG_AUTH_SPKI}"
-          bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${SEED_ENTROPIES}"
+          bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "{FOG_AUTH_SPKI}"
+          bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "{SEED_ENTROPIES}"
 
       - name: Install pods for Example project
         working-directory: ./Example
@@ -116,7 +116,7 @@ jobs:
         working-directory: ./Example
         env:
           SUPPRESS_XCODE_OUTPUT: ${{ github.event.inputs.suppress-xcode-output }}
-        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" ${{ SUPPRESS_XCODE_OUTPUT }}
+        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" {SUPPRESS_XCODE_OUTPUT}
 
       - uses: actions/upload-artifact@v3
         with:
