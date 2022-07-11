@@ -1,4 +1,4 @@
-name: sdk-tests
+name: dynamic-sdk-tests
 
 on:
   workflow_dispatch:
