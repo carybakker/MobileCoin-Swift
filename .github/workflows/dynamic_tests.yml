@@ -112,4 +112,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: test-results
+          if: always()
           path: ./Example/test_output/report.html
