@@ -93,11 +93,11 @@ jobs:
           bundle exec pod keys set devNetworkAuthPassword ""
           bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated ""
           bundle exec pod keys set mobileDevTestAccountMnemonicsCommaSeparated ""
-          bundle exec pod keys set dynamicUser "{USER}"
-          bundle exec pod keys set dynamicNamespace "{NAMESPACE}"
-          bundle exec pod keys set dynamicEnvironment "{ENVIRONMENT}"
-          bundle exec pod keys set dynamicFogAuthoritySpki "{FOG_AUTH_SPKI}"
-          bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "{SEED_ENTROPIES}"
+          bundle exec pod keys set dynamicUser "${USER}"
+          bundle exec pod keys set dynamicNamespace "${NAMESPACE}"
+          bundle exec pod keys set dynamicEnvironment "${ENVIRONMENT}"
+          bundle exec pod keys set dynamicFogAuthoritySpki "${FOG_AUTH_SPKI}"
+          bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${SEED_ENTROPIES}"
 
       - name: Install pods for Example project
         working-directory: ./Example
@@ -114,7 +114,7 @@ jobs:
         working-directory: ./Example
         env:
           SUPPRESS_XCODE_OUTPUT: ${{ github.event.inputs.suppress-xcode-output }}
-        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" {SUPPRESS_XCODE_OUTPUT}
+        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" ${{env.SUPPRESS_XCODE_OUTPUT}}}
 
       - name: Archive Test Results
         if: always()
