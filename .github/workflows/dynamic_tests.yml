@@ -5,7 +5,7 @@ on:
     inputs:
       user:
         description: 'User'
-        required: true
+        required: false 
         default: ''
       namespace: 
         description: 'Namespace'
