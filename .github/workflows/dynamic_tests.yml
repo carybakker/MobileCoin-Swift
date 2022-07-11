@@ -96,7 +96,7 @@ jobs:
           bundle exec pod keys set dynamicUser "{USER}"
           bundle exec pod keys set dynamicNamespace "{NAMESPACE}"
           bundle exec pod keys set dynamicEnvironment "{ENVIRONMENT}"
-          bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "{FOG_AUTH_SPKI}"
+          bundle exec pod keys set dynamicFogAuthoritySpki "{FOG_AUTH_SPKI}"
           bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "{SEED_ENTROPIES}"
 
       - name: Install pods for Example project
