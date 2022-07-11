@@ -95,4 +95,9 @@ jobs:
 
       - name: Run Integration Tests On Example
         working-directory: ./Example
-        run: bundle exec fastlane scan --scheme "Integration Tests - Tests Only"
+        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" --suppress_xcode_output
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ./Example/test_output/report.html
