@@ -3,8 +3,14 @@ name: dynamic-sdk-tests
 on:
   workflow_dispatch:
     inputs:
+      auth-user:
+        description: 'User (client auth)'
+        required: false
+      auth-password:
+        description: 'Password (client auth)'
+        required: false
       user:
-        description: 'User'
+        description: 'User (environment)'
         required: false 
         default: ''
       namespace: 
@@ -23,6 +29,13 @@ on:
         description: 'Seed Entropies - Comma Separated'
         required: true
         default: ''
+      suppress-xcode-output:
+        description: 'XCode Output Option'
+        default: '--suppress_xcode_output'
+        type: choice
+        options:
+          - '--suppress_xcode_output'
+          - ' '
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
@@ -54,10 +67,8 @@ jobs:
           bundle config set --local clean 'true'
           bundle check || bundle install
 
-      - name: Set up test Network
-        env:
-          NETWORK_UNDER_TEST: ${{ github.event.inputs.network }}
-        run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .${NETWORK_UNDER_TEST}/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
+      - name: Set Network to Dynamic
+        run: sed -i '' "s/NetworkPreset = \..*/NetworkPreset = .dynamic(dynamic)/" ./Tests/Integration/Network/NetworkConfigFixtures.swift
 
       - name: GCP Service Account
         run: |
@@ -88,10 +99,10 @@ jobs:
           bundle exec pod keys set devNetworkAuthPassword ""
           bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated ""
           bundle exec pod keys set mobileDevTestAccountMnemonicsCommaSeparated ""
-          bundle exec pod keys set user "{USER}"
-          bundle exec pod keys set namespace "{NAMESPACE}"
-          bundle exec pod keys set environment "{ENVIRONMENT}"
-          bundle exec pod keys set dynamicTestAccountFogAuthoritySpki "${FOG_AUTH_SPKI}"
+          bundle exec pod keys set dynamicUser "${USER}"
+          bundle exec pod keys set dynamicNamespace "${NAMESPACE}"
+          bundle exec pod keys set dynamicEnvironment "${ENVIRONMENT}"
+          bundle exec pod keys set dynamicFogAuthoritySpki "${FOG_AUTH_SPKI}"
           bundle exec pod keys set dynamicTestAccountSeedEntropiesCommaSeparated "${SEED_ENTROPIES}"
 
       - name: Install pods for Example project
@@ -107,10 +118,13 @@ jobs:
 
       - name: Run Integration Tests On Example
         working-directory: ./Example
-        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" --suppress_xcode_output
+        env:
+          SUPPRESS_XCODE_OUTPUT: ${{ github.event.inputs.suppress-xcode-output }}
+        run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" ${{env.SUPPRESS_XCODE_OUTPUT}}
 
-      - uses: actions/upload-artifact@v3
+      - name: Archive Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
         with:
           name: test-results
-          if: always()
           path: ./Example/test_output/report.html
