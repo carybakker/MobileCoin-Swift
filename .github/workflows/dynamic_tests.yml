@@ -3,8 +3,14 @@ name: dynamic-sdk-tests
 on:
   workflow_dispatch:
     inputs:
+      auth-user:
+        description: 'User (client auth)'
+        required: false
+      auth-password:
+        description: 'Password (client auth)'
+        required: false
       user:
-        description: 'User'
+        description: 'User (environment)'
         required: false 
         default: ''
       namespace: 
