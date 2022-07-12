@@ -86,6 +86,12 @@ jobs:
         working-directory: ./Example
         run: make setup
 
+      - name: Mask Values
+        run: |
+          echo "::add-mask::$AUTH_USER"
+          echo "::add-mask::$AUTH_PASSWORD"
+          echo "::add-mask::$SEED_ENTROPIES"
+
       - name: Provide Dev Credentials
         working-directory: ./Example
         env:
@@ -97,9 +103,6 @@ jobs:
           FOG_AUTH_SPKI: ${{ github.event.inputs.fog-auth-spki-b64-encoded }}
           SEED_ENTROPIES: ${{ secrets.DYNAMIC_TEST_ACCOUNT_SEED_ENTROPIES_COMMA_SEPARATED }}
         run: |
-          echo "::add-mask::$AUTH_USER"
-          echo "::add-mask::$AUTH_PASSWORD"
-          echo "::add-mask::$SEED_ENTROPIES"
           bundle exec pod keys set devNetworkAuthUsername "${AUTH_USER}"
           bundle exec pod keys set devNetworkAuthPassword "${AUTH_PASSWORD}"
           bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated ""

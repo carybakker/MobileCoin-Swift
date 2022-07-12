@@ -71,6 +71,12 @@ jobs:
         working-directory: ./Example
         run: make setup
 
+      - name: Mask Values
+        run: |
+          echo "::add-mask::$AUTH_USER"
+          echo "::add-mask::$AUTH_PASSWORD"
+          echo "::add-mask::$SEED_ENTROPIES"
+
       - name: Provide Dev Credentials
         working-directory: ./Example
         env:
@@ -81,9 +87,6 @@ jobs:
           DYNAMIC_FOG_AUTH_SPKI: ${{ secrets.DYNAMIC_TEST_ACCOUNT_FOG_AUTHORITY_SPKI }}
           DYNAMIC_SEED_ENTROPIES: ${{ secrets.DYNAMIC_TEST_ACCOUNT_SEED_ENTROPIES_COMMA_SEPARATED }}
         run: |
-          echo "::add-mask::$AUTH_USER"
-          echo "::add-mask::$AUTH_PASSWORD"
-          echo "::add-mask::$SEED_ENTROPIES"
           bundle exec pod keys set devNetworkAuthUsername "${TEST_DEV_USER}"
           bundle exec pod keys set devNetworkAuthPassword "${TEST_DEV_PASSWORD}"
           bundle exec pod keys set testNetTestAccountMnemonicsCommaSeparated "${TEST_NET_MNEMONICS}"
