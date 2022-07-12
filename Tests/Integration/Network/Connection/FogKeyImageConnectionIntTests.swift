@@ -103,9 +103,7 @@ class FogKeyImageConnectionIntTests: XCTestCase {
         try createFogKeyImageConnection(
             transportProtocol: transportProtocol
         ).checkKeyImages(request: request) {
-            guard let error = $0.failureOrFulfill(expectation: expect) else { return }
-            print("error: \(error)")
-
+            guard nil != $0.failureOrFulfill(expectation: expect) else { return }
             expect.fulfill()
         }
         waitForExpectations(timeout: 20)

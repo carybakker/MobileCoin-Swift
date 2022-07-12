@@ -10,8 +10,11 @@ plugin 'cocoapods-keys', {
     "devNetworkAuthPassword",
     "testNetTestAccountMnemonicsCommaSeparated",
     "mobileDevTestAccountMnemonicsCommaSeparated",
-    "dynamicTestAccountSeedEntropiesCommaSeparated",
-    "dynamicTestAccountFogAuthoritySpki",
+    "dynamicUser",
+    "dynamicNamespace",
+    "dynamicEnvironment",
+    "dynamicFogAuthoritySpki",
+    "dynamicTestAccountSeedEntropiesCommaSeparated"
   ]}
 
 use_frameworks!
