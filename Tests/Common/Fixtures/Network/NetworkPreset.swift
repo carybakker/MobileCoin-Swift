@@ -179,7 +179,8 @@ extension NetworkPreset {
         case .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
             return "mc://node1.\(self).mobilecoin.com"
         case .dynamic(let preset):
-            return "mc://node1.\(preset.namespace).\(preset.environment).mobilecoin.com"
+            let namespace = preset.namespace.isEmpty ? "" : preset.namespace + "."
+            return "mc://node1.\(namespace)\(preset.environment).mobilecoin.com"
         }
     }
     var fogUrl: String {
@@ -194,8 +195,9 @@ extension NetworkPreset {
         case .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
             return "fog://fog.\(self).mobilecoin.com"
         case .dynamic(let preset):
+            let namespace = preset.namespace.isEmpty ? "" : preset.namespace + "."
             return "fog://\(preset.user)fog." +
-                    "\(preset.namespace).\(preset.environment).mobilecoin.com"
+                    "\(namespace)\(preset.environment).mobilecoin.com"
         }
     }
     var fogShortUrl: String {
