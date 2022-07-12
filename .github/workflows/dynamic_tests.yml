@@ -14,12 +14,12 @@ on:
         required: false 
         default: ''
       namespace: 
-        description: 'Namespace'
+        description: 'Namespace (e.g. test, alpha, etc.)'
         required: true
         default: 'alpha'
       environment:
         description: 'Environment'
-        required: true
+        required: false 
         default: 'development'
       fog-auth-spki-b64-encoded:
         description: 'Fog Auth Spki B64 Encoded'
