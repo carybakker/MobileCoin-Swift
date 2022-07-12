@@ -18,9 +18,9 @@ on:
         required: true
         default: 'alpha'
       environment:
-        description: 'Environment'
+        description: 'Environment (e.g. development)'
         required: false 
-        default: 'development'
+        default: ''
       fog-auth-spki-b64-encoded:
         description: 'Fog Auth Spki B64 Encoded'
         required: true
@@ -114,7 +114,7 @@ jobs:
       - name: Generating CocoaPods Keys
         run: ./scripts/setkeysfor Example
 
-      - name: Make Bootstrap PostKeys
+      - name: Make Bootstrap Post Keys
         working-directory: ./Example
         run: make bootstrap 
 
