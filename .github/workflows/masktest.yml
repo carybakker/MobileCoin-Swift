@@ -18,10 +18,14 @@ jobs:
         run: echo ${SPECIAL_STUFF}
 
       - name: Mask Value
+        env:
+          SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
         run: |
           echo "::add-mask::${SPECIAL_STUFF}"
       
       - name: Echo Masked Value
+        env:
+          SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
         run: echo ${SPECIAL_STUFF}
           # run: echo ${SPECIAL_STUFF}
           #echo-masked:
