@@ -45,6 +45,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Mask Values
+        env:
           AUTH_USER: ${{ github.event.inputs.auth-user }}
           AUTH_PASSWORD: ${{ github.event.inputs.auth-password }}
           USER: ${{ github.event.inputs.user }}
