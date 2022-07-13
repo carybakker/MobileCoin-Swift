@@ -2,11 +2,11 @@ name: mask-test
 
 on:
   workflow_dispatch:
-    #    inputs:
-    #  special-stuff:
-    #    description: 'Put something sensitive here'
-    #    type: string
-    #    required: true
+    inputs:
+      special-stuff:
+        description: 'Put something sensitive here'
+        type: string
+        required: true
 
 jobs:
   echo-unmasked: 
