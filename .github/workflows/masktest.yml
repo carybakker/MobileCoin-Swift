@@ -11,12 +11,11 @@ on:
 jobs:
   echo-unmasked: 
     runs-on: macos-latest
-      # env:
-      # SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
+      env:
+        SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
     steps:
       - name: Echo Unmasked Value
-        #run: echo ${SPECIAL_STUFF}
-        run: echo "Hello, World!"
+        run: echo ${SPECIAL_STUFF}
 
           #echo-masked:
           #runs-on: macos-latest
