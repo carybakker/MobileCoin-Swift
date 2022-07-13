@@ -5,6 +5,7 @@ on:
     inputs:
       special-stuff:
         description: 'Put something sensitive here'
+        type: string
         required: true
 
 jobs:
