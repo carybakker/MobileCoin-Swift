@@ -45,12 +45,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Mask Values
+          AUTH_USER: ${{ github.event.inputs.auth-user }}
+          AUTH_PASSWORD: ${{ github.event.inputs.auth-password }}
+          USER: ${{ github.event.inputs.user }}
+          FOG_AUTH_SPKI: ${{ github.event.inputs.fog-auth-spki-b64-encoded }}
+          SEED_ENTROPIES: ${{ github.event.inputs.seed-entropies }}
         run: |
-          echo "::add-mask::${{ github.event.inputs.auth-user }}"
-          echo "::add-mask::${{ github.event.inputs.auth-password }}"
-          echo "::add-mask::${{ github.event.inputs.user }}"
-          echo "::add-mask::${{ github.event.inputs.fog-auth-spki-b64-encoded }}"
-          echo "::add-mask::${{ github.event.inputs.seed-entropies }}"
+          echo "::add-mask::${AUTH_USER}"
+          echo "::add-mask::${AUTH_PASSWORD}"
+          echo "::add-mask::${USER}"
+          echo "::add-mask::${FOG_AUTH_SPKI}"
+          echo "::add-mask::${SEED_ENTROPIES}"
 
       - name: Test Mask With Echo
         run: |
