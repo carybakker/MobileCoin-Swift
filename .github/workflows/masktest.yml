@@ -13,10 +13,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Mask Value
-        env:
-          SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
         run: |
-          echo "::add-mask::${SPECIAL_STUFF}"
+          echo "::add-mask::${github.event.inputs.special-stuff}"
       
       - name: Echo Masked Value
         env:
