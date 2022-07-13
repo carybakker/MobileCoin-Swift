@@ -1,31 +1,32 @@
-name: masktest
+name: mask-test
 
 on:
   workflow_dispatch:
-    inputs:
-      special-stuff:
-        description: 'Put something sensitive here'
-        type: string
-        required: true
+    #    inputs:
+    #  special-stuff:
+    #    description: 'Put something sensitive here'
+    #    type: string
+    #    required: true
 
 jobs:
   echo-unmasked: 
     runs-on: macos-latest
-    env:
-      SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
+      # env:
+      # SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
     steps:
       - name: Echo Unmasked Value
-        run: echo ${SPECIAL_STUFF}
+        #run: echo ${SPECIAL_STUFF}
+        run: echo "Hello, World!"
 
-  echo-masked:
-    runs-on: macos-latest
-    env:
-      SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
-    steps:
-      - name: Mask Value
-        run: |
-        echo "::add-mask::${SPECIAL_STUFF}"
+          #echo-masked:
+          #runs-on: macos-latest
+          #env:
+          #SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
+          #steps:
+          #- name: Mask Value
+          #run: |
+          #echo "::add-mask::${SPECIAL_STUFF}"
 
-      - name: Echo After Mask
-        run: echo ${SPECIAL_STUFF}
+          #- name: Echo After Mask
+          #run: echo ${SPECIAL_STUFF}
 
