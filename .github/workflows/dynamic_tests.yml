@@ -52,11 +52,11 @@ jobs:
           FOG_AUTH_SPKI: ${{ github.event.inputs.fog-auth-spki-b64-encoded }}
           SEED_ENTROPIES: ${{ github.event.inputs.seed-entropies }}
         run: |
-          echo "::add-mask::${AUTH_USER}"
-          echo "::add-mask::${AUTH_PASSWORD}"
-          echo "::add-mask::${USER}"
-          echo "::add-mask::${FOG_AUTH_SPKI}"
-          echo "::add-mask::${SEED_ENTROPIES}"
+          "::add-mask::${AUTH_USER}"
+          "::add-mask::${AUTH_PASSWORD}"
+          "::add-mask::${USER}"
+          "::add-mask::${FOG_AUTH_SPKI}"
+          "::add-mask::${SEED_ENTROPIES}"
 
       - name: Test Mask With Echo
         run: |
