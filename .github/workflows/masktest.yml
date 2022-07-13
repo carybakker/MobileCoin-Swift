@@ -12,7 +12,6 @@ jobs:
   echo-unmasked: 
     runs-on: macos-latest
     steps:
-
       - name: Mask Value
         #env:
         #  SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
