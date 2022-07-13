@@ -87,10 +87,18 @@ jobs:
         run: make setup
 
       - name: Mask Values
+        env:
+          AUTH_USER: ${{ github.event.inputs.auth-user }}
+          AUTH_PASSWORD: ${{ github.event.inputs.auth-password }}
+          USER: ${{ github.event.inputs.user }}
+          FOG_AUTH_SPKI: ${{ github.event.inputs.fog-auth-spki-b64-encoded }}
+          SEED_ENTROPIES: ${{ github.event.inputs.seed-entropies }}
         run: |
-          echo "::add-mask::$AUTH_USER"
-          echo "::add-mask::$AUTH_PASSWORD"
-          echo "::add-mask::$SEED_ENTROPIES"
+          echo "::add-mask::${AUTH_USER}"
+          echo "::add-mask::${AUTH_PASSWORD}"
+          echo "::add-mask::${USER}"
+          echo "::add-mask::${FOG_AUTH_SPKI}"
+          echo "::add-mask::${SEED_ENTROPIES}"
 
       - name: Provide Dev Credentials
         working-directory: ./Example
@@ -101,7 +109,7 @@ jobs:
           NAMESPACE: ${{ github.event.inputs.namespace }}
           ENVIRONMENT: ${{ github.event.inputs.environment }}
           FOG_AUTH_SPKI: ${{ github.event.inputs.fog-auth-spki-b64-encoded }}
-          SEED_ENTROPIES: ${{ secrets.DYNAMIC_TEST_ACCOUNT_SEED_ENTROPIES_COMMA_SEPARATED }}
+          SEED_ENTROPIES: ${{ github.event.inputs.seed-entropies }}
         run: |
           bundle exec pod keys set devNetworkAuthUsername "${AUTH_USER}"
           bundle exec pod keys set devNetworkAuthPassword "${AUTH_PASSWORD}"
