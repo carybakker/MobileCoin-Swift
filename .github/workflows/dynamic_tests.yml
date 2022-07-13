@@ -45,18 +45,20 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Mask Values
-        env:
-          AUTH_USER: ${{ github.event.inputs.auth-user }}
-          AUTH_PASSWORD: ${{ github.event.inputs.auth-password }}
-          USER: ${{ github.event.inputs.user }}
-          FOG_AUTH_SPKI: ${{ github.event.inputs.fog-auth-spki-b64-encoded }}
-          SEED_ENTROPIES: ${{ github.event.inputs.seed-entropies }}
         run: |
-          echo "::add-mask::${AUTH_USER}"
-          echo "::add-mask::${AUTH_PASSWORD}"
-          echo "::add-mask::${USER}"
-          echo "::add-mask::${FOG_AUTH_SPKI}"
-          echo "::add-mask::${SEED_ENTROPIES}"
+          echo "::add-mask::${{ github.event.inputs.auth-user }}"
+          echo "::add-mask::${{ github.event.inputs.auth-password }}"
+          echo "::add-mask::${{ github.event.inputs.user }}"
+          echo "::add-mask::${{ github.event.inputs.fog-auth-spki-b64-encoded }}"
+          echo "::add-mask::${{ github.event.inputs.seed-entropies }}"
+
+      - name: Test Mask With Echo
+        run: |
+          echo "${{ github.event.inputs.auth-user }}"
+          echo "${{ github.event.inputs.auth-password }}"
+          echo "${{ github.event.inputs.user }}"
+          echo "${{ github.event.inputs.fog-auth-spki-b64-encoded }}"
+          echo "${{ github.event.inputs.seed-entropies }}"
 
       - name: Set Ruby Version to 2.7
         uses: ruby/setup-ruby@359bebbc29cbe6c87da6bc9ea3bc930432750108
