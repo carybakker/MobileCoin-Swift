@@ -1,0 +1,32 @@
+name: mask-test
+
+on:
+  workflow_dispatch:
+    inputs:
+      special-stuff:
+        description: 'Put something sensitive here'
+        required: true
+
+jobs:
+  regular-echo:
+    runs-on: macos-latest
+    env:
+      SPECIAL_STUFF: ${{ github.event.inputs.special-stuff }}
+    steps:
+      - name: Echo unmasked value
+        run: echo ${SPECIAL_STUFF}
+
+  mask-value:
+    runs-on: macos-latest
+    steps:
+      - name: Mask Value
+        run: |
+        echo "::add-mask::${SPECIAL_STUFF}"
+
+  echo-after-masking:
+    runs-on: macos-latest
+    steps:
+      - name: Echo After Mask
+        run: echo ${SPECIAL_STUFF}
+
+
