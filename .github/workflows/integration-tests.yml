@@ -104,9 +104,11 @@ jobs:
           SUPPRESS_XCODE_OUTPUT: ${{ github.event.inputs.suppress-xcode-output }}
         run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" $${SUPPRESS_XCODE_OUTPUT}} 
 
-      - name: Archive Tests Results
+      - name: Archive Results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
-          path: ./Example/test_output/report.html
+          name: integration-test-logs 
+          path: |
+            ./Example/test_output/report.html
+            ~/Library/Logs/scan
