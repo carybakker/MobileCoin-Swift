@@ -56,22 +56,19 @@ struct DynamicNetworkConfig {
 }
 
 extension DynamicNetworkConfig {
+
+    #if canImport(Keys)
+        private static let dynamicFogAuthoritySpki =
+            MobileCoinKeys().dynamicFogAuthoritySpki
+    #else
+        private static let dynamicFogAuthoritySpki = ""
+    #endif
+
     enum AlphaDevelopment {
         static let user = ""
         static let namespace = "alpha"
         static let environment = "development"
-        static let fogAuthoritySpkiB64Encoded = """
-            MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAyFOockvCEc9TcO1NvsiUfFVzvtDsR64UIRRU\
-            l3tBM2Bh8KBA932/Up86RtgJVnbslxuUCrTJZCV4dgd5hAo/mzuJOy9lAGxUTpwWWG0zZJdpt8HJRVLX\
-            76CBpWrWEt7JMoEmduvsCR8q7WkSNgT0iIoSXgT/hfWnJ8KGZkN4WBzzTH7hPrAcxPrzMI7TwHqUFfmO\
-            X7/gc+bDV5ZyRORrpuu+OR2BVObkocgFJLGmcz7KRuN7/dYtdYFpiKearGvbYqBrEjeo/15chI0Bu/9o\
-            QkjPBtkvMBYjyJPrD7oPP67i0ZfqV6xCj4nWwAD3bVjVqsw9cCBHgaykW8ArFFa0VCMdLy7UymYU5SQs\
-            fXrw/mHpr27Pp2Z0/7wpuFgJHL+0ARU48OiUzkXSHX+sBLov9X6f9tsh4q/ZRorXhcJi7FnUoagBxewv\
-            lfwQfcnLX3hp1wqoRFC4w1DC+ki93vIHUqHkNnayRsf1n48fSu5DwaFfNvejap7HCDIOpCCJmRVR8mVu\
-            xi6jgjOUa4Vhb/GCzxfNIn5ZYym1RuoE0TsFO+TPMzjed3tQvG7KemGFz3pQIryb43SbG7Q+EOzIigxY\
-            DytzcxOO5Jx7r9i+amQEiIcjBICwyFoEUlVJTgSpqBZGNpznoQ4I2m+uJzM+wMFsinTZN3mp4FU5UHjQ\
-            sHKG+ZMCAwEAAQ==
-            """
+        static let fogAuthoritySpkiB64Encoded = dynamicFogAuthoritySpki
 
         static func make() -> DynamicNetworkConfig {
             DynamicNetworkConfig(
@@ -204,23 +201,14 @@ extension NetworkPreset {
     private static let mainNetFogReportMrEnclaveHex =
         "f3f7e9a674c55fb2af543513527b6a7872de305bac171783f6716a0bf6919499"
 
-//    private static let mainNetConsensusMrEnclaveHex =
-//        "e66db38b8a43a33f6c1610d335a361963bb2b31e056af0dc0a895ac6c857cab9"
-//    private static let mainNetFogViewMrEnclaveHex =
-//        "ddd59da874fdf3239d5edb1ef251df07a8728c9ef63057dd0b50ade5a9ddb041"
-//    private static let mainNetFogLedgerMrEnclaveHex =
-//        "511eab36de691ded50eb08b173304194da8b9d86bfdd7102001fe6bb279c3666"
-//    private static let mainNetFogReportMrEnclaveHex =
-//        "709ab90621e3a8d9eb26ed9e2830e091beceebd55fb01c5d7c31d27e83b9b0d1"
-
     private static let testNetConsensusMrEnclaveHex =
-        "9659ea738275b3999bf1700398b60281be03af5cb399738a89b49ea2496595af"
+        "4f134dcfd9c0885956f2f9af0f05c2050d8bdee2dc63b468a640670d7adeb7f8"
     private static let testNetFogViewMrEnclaveHex =
-        "e154f108c7758b5aa7161c3824c176f0c20f63012463bf3cc5651e678f02fb9e"
+        "719ca43abbe02f507bb91ea11ff8bc900aa86363a7d7e77b8130426fc53d8684"
     private static let testNetFogLedgerMrEnclaveHex =
-        "768f7bea6171fb83d775ee8485e4b5fcebf5f664ca7e8b9ceef9c7c21e9d9bf3"
+        "685481b33f2846585f33506ab65649c98a4a6d1244989651fd0fcde904ebd82f"
     private static let testNetFogReportMrEnclaveHex =
-        "a4764346f91979b4906d4ce26102228efe3aba39216dec1e7d22e6b06f919f11"
+        "8f2f3bf81f24bf493fa6d76e29e0f081815022592b1e854f95bda750aece7452"
 
     private static let devMrSignerHex =
         "7ee5e29d74623fdbc6fbf1454be6f3bb0b86c12366b7b478ad13353e44de8411"
@@ -602,13 +590,8 @@ extension NetworkPreset {
         BasicCredentials(username: Self.invalidCredUsername, password: Self.invalidCredPassword)
     }
 
-#if canImport(Keys)
-    private static let devAuthUsername = MobileCoinKeys().devNetworkAuthUsername
-    private static let devAuthPassword = MobileCoinKeys().devNetworkAuthPassword
-#else
-    private static let devAuthUsername = ""
-    private static let devAuthPassword = ""
-#endif
+    private static let devAuthUsername = devNetworkAuthUsername
+    private static let devAuthPassword = devNetworkAuthPassword
 
     var testAccountsMnemonics: [String] {
         switch self {
@@ -634,24 +617,27 @@ extension NetworkPreset {
     var testAccountRootEntropies: [Data] {
         switch self {
         case .dynamic:
-            return [
-                "b01579aab48859b4e9f3ca8ec5e9904d8584bb8da30ae712d4e65426c76daab7",
-                "06edaf5b30852bc5e2033a6a5e4d25f2681b2e27d3499560185cecff4cff205f",
-                "dcd7feec764e02041ed7b835a6fad7bd30bc911207d7a05c772d687d1e3137e6",
-                "d82ed8fedcaae021efce0e6c32460fac32ff8f2918eb157557f7a9c20751af62",
-                "3864150d417afc1ddea49848c5f672c602da152c350473a6947f0f29a3a65825",
-                "43c8272b3e9f5da19761e88204d250b010672ca8a2f540af6bd25c67c3b0c200",
-                "a801af55a4f6b35f0dbb4a9c754ae62b926d25dd6ed954f6e697c562a1641c21",
-                "0aeb783f2d735b086ad6e7bbd87a85a584c6941139811dfb40d004810839514f",
-                "8ecaa57fcbec4397ca7fd270695ec2dd6d6bffccde24c0ca4f115a5cae1e896d",
-                "54a602d432c601887af7921c248b984f8510cb016580e156e0a647735acaf2bc",
-                "793e7c54c384e236343f1854e0626de16bff318561d8aa6ba040ebec4cff4c05",
-            ]
-            .compactMap({ Data(hexEncoded: String($0)) })
+            return Self.dynamicTestAccountSeedEntropiesCommaSeparated
+                .split(separator: ",")
+                .compactMap({ Data(hexEncoded: String($0)) })
         default:
             return []
         }
     }
+
+#if canImport(Keys)
+    private static let devNetworkAuthUsername =
+        MobileCoinKeys().devNetworkAuthUsername
+#else
+    private static let devNetworkAuthUsername = ""
+#endif
+
+#if canImport(Keys)
+    private static let devNetworkAuthPassword =
+        MobileCoinKeys().devNetworkAuthPassword
+#else
+    private static let devNetworkAuthPassword = ""
+#endif
 
 #if canImport(Keys)
     private static let testNetTestAccountMnemonicsCommaSeparated =
@@ -661,8 +647,8 @@ extension NetworkPreset {
 #endif
 
 #if canImport(Keys)
-    private static let mobileDevTestAccountMnemonicsCommaSeparated =
-        MobileCoinKeys().mobileDevTestAccountMnemonicsCommaSeparated
+private static let mobileDevTestAccountMnemonicsCommaSeparated =
+    MobileCoinKeys().mobileDevTestAccountMnemonicsCommaSeparated
 #else
     private static let mobileDevTestAccountMnemonicsCommaSeparated = ""
 #endif
