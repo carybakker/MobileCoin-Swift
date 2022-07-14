@@ -94,7 +94,6 @@ jobs:
 
       - name: Run Integration Tests On Example
         working-directory: ./Example
-        env:
         run: export SCAN_XCODEBUILD_FORMATTER="xcpretty"; bundle exec fastlane scan --scheme "Integration Tests" --suppress_xcode_output
 
       - name: Archive Build Results
