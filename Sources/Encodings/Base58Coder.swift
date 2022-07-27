@@ -9,6 +9,7 @@ public enum Base58DecodingResult {
     case publicAddress(PublicAddress)
     case paymentRequest(PaymentRequest)
     case transferPayload(TransferPayload)
+    case txOutGiftCode(TxOutGiftCode)
 }
 
 public enum Base58Coder {
@@ -27,6 +28,12 @@ public enum Base58Coder {
     public static func encode(_ transferPayload: TransferPayload) -> String {
         var wrapper = Printable_PrintableWrapper()
         wrapper.transferPayload = Printable_TransferPayload(transferPayload)
+        return wrapper.base58EncodedString()
+    }
+
+    public static func encode(_ txOutGiftCode: TxOutGiftCode) -> String {
+        var wrapper = Printable_PrintableWrapper()
+        wrapper.txOutGiftCode = Printable_TxOutGiftCode(txOutGiftCode)
         return wrapper.base58EncodedString()
     }
 
@@ -52,6 +59,12 @@ public enum Base58Coder {
                 return nil
             }
             return .transferPayload(transferPayload)
+        case .txOutGiftCode(let txOutGiftCode):
+            guard let txOutGiftCode = TxOutGiftCode(txOutGiftCode) else {
+                return nil
+            }
+            return .txOutGiftCode(txOutGiftCode)
+
         case .none:
             return nil
         }

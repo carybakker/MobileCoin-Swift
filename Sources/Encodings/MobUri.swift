@@ -9,6 +9,7 @@ public enum MobUri {
         case publicAddress(PublicAddress)
         case paymentRequest(PaymentRequest)
         case transferPayload(TransferPayload)
+        case txOutGiftCode(TxOutGiftCode)
     }
 
     public static func decode(uri uriString: String) -> Result<Payload, InvalidInputError> {
@@ -41,6 +42,10 @@ public enum MobUri {
 
     public static func encode(_ transferPayload: TransferPayload) -> String {
         encode(.transferPayload(transferPayload))
+    }
+
+    public static func encode(_ txOutGiftCode: TxOutGiftCode) -> String {
+        encode(.txOutGiftCode(txOutGiftCode))
     }
 
     static func encode(_ payload: Payload) -> String {
@@ -90,12 +95,14 @@ extension MobUri.Payload {
             self = .paymentRequest(paymentRequest)
         case .transferPayload(let transferPayload):
             self = .transferPayload(transferPayload)
+        case .txOutGiftCode(let txOutGiftCode):
+            self = .txOutGiftCode(txOutGiftCode)
         }
     }
 
     var payloadType: PayloadType {
         switch self {
-        case .publicAddress, .paymentRequest, .transferPayload:
+        case .publicAddress, .paymentRequest, .transferPayload, .txOutGiftCode:
             return .b58
         }
     }
@@ -108,6 +115,8 @@ extension MobUri.Payload {
             return Base58Coder.encode(paymentRequest)
         case .transferPayload(let transferPayload):
             return Base58Coder.encode(transferPayload)
+        case .txOutGiftCode(let txOutGiftCode):
+            return Base58Coder.encode(txOutGiftCode)
         }
     }
 
