@@ -113,7 +113,7 @@ jobs:
         with:
           name: build
           path: |
-            ./build
+            ./Example/build
 
   # run-transacting-integration-tests:
   #   needs: build-for-testing
@@ -252,10 +252,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
+          path: |
+            ./Example/build
 
       - name: Build For Testing
         working-directory: ./Example
-        run: bundle exec fastlane scan --scheme "Integration NonTransacting Tests"  --device "iPhone 14 Pro" --result_bundle true --derived_data_path "./derived_data" --test_without_building true
+        run: bundle exec fastlane scan --scheme "Integration NonTransacting Tests"  --device "iPhone 14 Pro" --result_bundle true --derived_data_path "./build" --test_without_building true
 
       - name: Archive Test Results
         if: always()
