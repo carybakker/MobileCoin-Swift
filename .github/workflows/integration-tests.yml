@@ -106,10 +106,9 @@ jobs:
 
       - name: Run Transacting Integration Tests On Example
         working-directory: ./Example
-        run: export SCAN_XCODEBUILD_FORMATTER="xcbeautify"; bundle exec fastlane scan --scheme "Integration Transacting Tests"  --device "iPhone 14 Pro" --result_bundle true --derived_data_path "./derived_data" --build_for_testing true
+        run: export SCAN_XCODEBUILD_FORMATTER="xcbeautify"; bundle exec fastlane scan --scheme "Integration Transacting Tests"  --device "iPhone 14 Pro" --result_bundle true --derived_data_path "./build" --build_for_testing true
 
       - name: Archive Build
-        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: build
@@ -249,15 +248,12 @@ jobs:
         run: |
           echo '${{ secrets.GCP_SERVICE_KEY }}' > "service-key.json"
 
-      - name: Unrchive Build
-        if: always()
+      - name: Unarchive Build
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: |
-            ./build
 
-      - name: Run NonTransacting Integration Tests On Example
+      - name: Build For Testing
         working-directory: ./Example
         run: bundle exec fastlane scan --scheme "Integration NonTransacting Tests"  --device "iPhone 14 Pro" --result_bundle true --derived_data_path "./derived_data" --test_without_building true
 
