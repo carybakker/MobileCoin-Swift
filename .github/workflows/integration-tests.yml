@@ -34,6 +34,9 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true
 
+      - name: Install 'xcbeautify'
+        run: brew install xcbeautify
+
       - name: Install 'rename' command
         run: brew install rename
 
